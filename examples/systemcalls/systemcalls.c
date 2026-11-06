@@ -1,4 +1,8 @@
 #include "systemcalls.h"
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 
 /**
  * @param cmd the command to execute with system()
@@ -16,6 +20,9 @@ bool do_system(const char *cmd)
  *   and return a boolean true if the system() call completed with success
  *   or false() if it returned a failure
 */
+    int ret = system(cmd);
+    if((cmd == NULL) || (ret == -1) || (ret == 127))
+	return false; 
 
     return true;
 }
@@ -57,7 +64,36 @@ bool do_exec(int count, ...)
  *   (first argument to execv), and use the remaining arguments
  *   as second argument to the execv() command.
  *
-*/
+*/  
+    int status = 0;
+    switch(fork()){
+	case -1:{
+		va_end(args);
+		return false;
+	}
+	case 0:{
+		if(execv(command[0], command) == -1){
+			_exit(1);
+		}
+	}
+	default:
+		if(wait(&status) == -1){
+			va_end(args);
+			return false;
+		}
+		else{
+			if(WIFEXITED(status) == true){
+				if(WEXITSTATUS(status) != 0){
+					va_end(args);
+					return false;
+				}
+			}
+			else{
+				va_end(args);
+				return false;
+			}
+		}
+    }
 
     va_end(args);
 
@@ -92,6 +128,37 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *   The rest of the behaviour is same as do_exec()
  *
 */
+	pid_t pid = fork();
+
+	if(pid == -1){
+		va_end(args);
+		return false;
+
+	}
+	if(pid == 0){
+		long maxfd = sysconf(_SC_OPEN_MAX);
+		for(int fd = 0; fd < maxfd; fd++)
+			close(fd);
+		int fd = open(outputfile, O_CREAT|O_TRUNC|O_WRONLY, 0777);
+		if(fd == -1)
+			_exit(1);
+		if(dup(0) == -1)
+			_exit(1);
+		if(dup(0) == -1)
+			_exit(1);
+
+		if(execv(command[0], command) == -1){
+			_exit(1);
+		}
+	}
+	if(pid > 0){
+		int status;
+		if(wait(&status) == -1){
+			va_end(args);
+			return false;
+		}
+	}
+
 
     va_end(args);
 
