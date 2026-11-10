@@ -113,22 +113,12 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
 cd /home/minhchi/practice/assignment_1/aeld-assignment-1/finder-app
-
-
-
-make clean
-make CROSS_COMPILE=${CROSS_COMPILE}gcc
-
-ASSIGNMENT1_PATH=~/practice/assignment_1/aeld-assignment-1/finder-app
-
-cd ${ASSIGNMENT1_PATH}
-
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
 
 # TODO: Copy the finder related scripts and executables to the /home directory
 # on the target rootfs
-echo 1 | sudo cp -L -r  ${ASSIGNMENT1_PATH}/writer ${ASSIGNMENT1_PATH}/finder.sh ${ASSIGNMENT1_PATH}/conf ${ASSIGNMENT1_PATH}/finder-test.sh ${ASSIGNMENT1_PATH}/autorun-qemu.sh ${OUTDIR}/rootfs/home/
+echo 1 | sudo cp -L -r  writer finder.sh conf finder-test.sh autorun-qemu.sh ${OUTDIR}/rootfs/home/
 sync
 
 # TODO: Chown the root directory
