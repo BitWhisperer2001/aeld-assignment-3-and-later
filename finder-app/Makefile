@@ -10,9 +10,8 @@ else
 endif
 
 
-
 .PHONY : clean
 clean:
-	rm -rf *.0
+	rm -rf *.o
 	rm -rf *.txt
 	rm -rf writer
