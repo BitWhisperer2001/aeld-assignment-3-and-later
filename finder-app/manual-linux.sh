@@ -112,7 +112,8 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
 echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-cd "$(dirname "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
 
