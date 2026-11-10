@@ -112,7 +112,7 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
 echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-cd /home/minhchi/practice/assignment_1/aeld-assignment-1/finder-app
+cd "$(dirname "$0")"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
 
