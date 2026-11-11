@@ -67,5 +67,9 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 echo "$(pwd)"
 cd /
 echo "$(ls)"
+cd home
+cd minhchi
+cd practice
+echo "$(ls)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
