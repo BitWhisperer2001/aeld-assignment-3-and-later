@@ -70,5 +70,7 @@ echo "$(ls)"
 cd home
 cd autotest-admin
 echo "$(ls)"
+cd autotest-admin
+echo "$(ls)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
