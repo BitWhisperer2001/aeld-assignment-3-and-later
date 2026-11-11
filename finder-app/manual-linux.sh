@@ -68,8 +68,6 @@ echo "$(pwd)"
 cd /
 echo "$(ls)"
 cd home
-cd minhchi
-cd practice
 echo "$(ls)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
