@@ -24,34 +24,6 @@ fi
 mkdir -p ${OUTDIR}
 
 cd "$OUTDIR"
-if [ ! -d "${OUTDIR}/linux-stable" ]; then
-    #Clone only if the repository does not exist.
-	echo "CLONING GIT LINUX STABLE VERSION ${KERNEL_VERSION} IN ${OUTDIR}"
-	git clone ${KERNEL_REPO} --depth 1 --single-branch --branch ${KERNEL_VERSION}
-fi
-if [ ! -e ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ]; then
-    cd linux-stable
-    echo "Checking out version ${KERNEL_VERSION}"
-    git checkout ${KERNEL_VERSION}
-
-    # TODO: Add your kernel build steps here
-    echo "Deep clean linux source code"
-    make ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} mrproper
-    echo "Apply default config" 
-    make ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} defconfig
-    echo "Build linux kernel start..."
-    make -j4 ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} all
-    echo "Build kernel module start..."
-    make -j4 ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} modules
-    echo "Build device tree start..."
-    make -j4 ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} dtbs
-    echo "Copy result to the ${OUTDIR}"
-    echo 1 | sudo -S cp ${OUTDIR}/linux-stable/arch/${ARCH}/boot/Image ${OUTDIR}
-    sync
-    
-fi
-
-echo "Adding the Image in outdir"
 
 echo "Creating the staging directory for the root filesystem"
 cd "$OUTDIR"
@@ -112,19 +84,6 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
 echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-cd "$SCRIPT_DIR"
+echo "$(pwd)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
-
-# TODO: Copy the finder related scripts and executables to the /home directory
-# on the target rootfs
-echo 1 | sudo cp -L -r  writer finder.sh conf finder-test.sh autorun-qemu.sh ${OUTDIR}/rootfs/home/
-sync
-
-# TODO: Chown the root directory
-echo 1 | sudo -S chown -R root:root ${OUTDIR}/rootfs
-# TODO: Create initramfs.cpio.gz
-cd ${OUTDIR}/rootfs
-find . | cpio -H newc -ov --owner root:root > ${OUTDIR}/initramfs.cpio
-gzip -f ../initramfs.cpio
