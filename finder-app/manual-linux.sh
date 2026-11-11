@@ -85,5 +85,7 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
 echo "$(pwd)"
+cd /
+echo "$(pwd)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
