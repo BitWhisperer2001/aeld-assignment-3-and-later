@@ -55,28 +55,8 @@ else
     cd busybox
 fi
 
-# TODO: Make and install busybox
-make ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE}
-make CONFIG_PREFIX=${OUTDIR}/rootfs ARCH=$ARCH CROSS_COMPILE=${CROSS_COMPILE} install
-
-echo "Library dependencies"
-${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "program interpreter"
-${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "Shared library"
-
 # TODO: Add library dependencies to rootfs
 SYSROOT=$(${CROSS_COMPILE}gcc -print-sysroot)
-
-INTERPS=$(${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "program interpreter" | awk -F': ' '{print $2}' | tr -d ']')
-for interp in $INTERPS; do
-    echo "INTERPS"
-    find "$SYSROOT" -name "$(basename "$interp")" -exec cp -L {} "${OUTDIR}/rootfs/lib/" \;
-done
-
-LIBS=$(${CROSS_COMPILE}readelf -a ${OUTDIR}/rootfs/bin/busybox | grep "Shared library" | awk -F'[][]' '{print $2}')
-for lib in $LIBS; do
-    echo "LIBS"
-    find "$SYSROOT" -name "$lib" -exec cp -L {} "${OUTDIR}/rootfs/lib64/" \;
-done
 
 # TODO: Make device nodes
 echo "Make node"
@@ -86,6 +66,6 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 # TODO: Clean and build the writer utility
 echo "$(pwd)"
 cd /
-echo "$(pwd)"
+echo "$(ls)"
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
