@@ -1,4 +1,5 @@
 #!/bin/bash
+FINDER_APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Script outline to install and build kernel.
 # Author: MrChi
 
@@ -64,19 +65,6 @@ echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/null c 1 3
 echo 1 | sudo -S mknod -m 666 ${OUTDIR}/rootfs/dev/console c 5 1
 
 # TODO: Clean and build the writer utility
-echo "$(pwd)"
-cd /
-echo "$(ls)"
-cd home
-echo "$(ls)"
-cd autotest-admin
-echo "$(ls)"
-echo "$(pwd)"
-
-
-
-
-
-
+cd "$FINDER_APP_DIR" || exit 1
 make clean
 make CROSS_COMPILE=${CROSS_COMPILE}gcc
