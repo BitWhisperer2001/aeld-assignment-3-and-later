@@ -71,6 +71,7 @@ cd home
 echo "$(ls)"
 cd autotest-admin
 echo "$(ls)"
+echo "$(pwd)"
 
 
 
